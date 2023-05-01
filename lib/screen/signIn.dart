@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:taskapp/auth/auth.dart';
-import 'package:taskapp/screen/main_screen.dart';
+import 'package:taskapp/screen/landing_page.dart';
 import 'package:taskapp/screen/sign_up.dart';
 import 'package:taskapp/util/color.dart';
 
@@ -26,9 +26,9 @@ class _SignInState extends State<SignIn> {
   bool load = false;
   bool gLoad = false;
 
-  navi(String? s){
+  navi(){
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context){
-      return HomeScreen(name: s ?? "Guest Name",);
+      return LandingPage();
     }));
   }
 
@@ -281,7 +281,7 @@ class _SignInState extends State<SignIn> {
                                     if(!value.exists){
                                       snackBar("Account Doesn't Exist");
                                     }else{
-                                      navi(value.get("name"));
+                                      navi();
                                     }
                                   });
 
@@ -373,8 +373,9 @@ class _SignInState extends State<SignIn> {
                                     await FirebaseFirestore.instance.collection("users").doc(user.uid).get().then((value) async{
                                       if(!value.exists){
                                         await FirebaseFirestore.instance.collection("users").doc(user.uid).set({
-                                          "name": user.displayName,
+                                          "display_name": user.displayName,
                                           "age": "1",
+                                          "photo_url": user.photoURL,
                                           "email": user.email,
                                           "uid": user.uid,
                                           "date": DateTime.now(),
@@ -382,7 +383,7 @@ class _SignInState extends State<SignIn> {
                                       }
                                     });
 
-                                    navi(user.displayName);
+                                    navi();
                                   }
 
                                 }catch(e){

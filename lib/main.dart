@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:taskapp/screen/main_screen.dart';
+import 'package:taskapp/screen/landing_page.dart';
 import 'package:taskapp/screen/signIn.dart';
 
 void main() async{
@@ -16,13 +16,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'MySpace',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
+      // home: FriendScreen(),
       home: FirebaseAuth.instance.currentUser != null ?
-      const HomeScreen() : const SignIn(),
+      const LandingPage() : const SignIn(),
     );
   }
 }

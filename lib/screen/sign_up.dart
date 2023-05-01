@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taskapp/auth/auth.dart';
-import 'package:taskapp/screen/main_screen.dart';
+import 'package:taskapp/screen/landing_page.dart';
 import 'package:taskapp/util/color.dart';
 
 class SignUp extends StatefulWidget {
@@ -34,9 +34,9 @@ class _SignUpState extends State<SignUp> {
     load = false;
   }
 
-  navi(String? s){
+  navi(){
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context){
-      return HomeScreen(name: s ?? "Guest Name",);
+      return LandingPage();
     }));
   }
 
@@ -57,6 +57,28 @@ class _SignUpState extends State<SignUp> {
       ),
     );
   }
+
+  // uploadPostImage(File file) async {
+  //   print("in image");
+  //   try {
+  //     await FirebaseStorage.instance
+  //         .ref(
+  //         "users/${FirebaseAuth.instance.currentUser!.uid}/${DateTime.now()}")
+  //         .putFile(file)
+  //         .then((TaskSnapshot taskSnapshot) {
+  //       if (taskSnapshot.state == TaskState.success) {
+  //         print("Image uploaded Successful");
+  //         taskSnapshot.ref.getDownloadURL().then((imageURL) {
+  //           setState(() {
+  //           });
+  //         });
+  //       }
+  //     });
+  //   } catch (e) {
+  //     print("Error $e");
+  //     Navigator.of(context).pop();
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -373,7 +395,39 @@ class _SignUpState extends State<SignUp> {
                   ),
                 ),
 
-                SizedBox(height: MediaQuery.of(context).size.width*0.08,),
+                SizedBox(height: 35,),
+
+                // Padding(
+                //   padding: const EdgeInsets.symmetric(vertical: 20.0),
+                //   child: InkWell(
+                //     onTap: () async{
+                //       XFile? image = await ImagePicker().pickImage(source: ImageSource.gallery);
+                //       if(image != null){
+                //         await uploadPostImage(File(image.path));
+                //         if(profilePic != null){
+                //           setState(() {});
+                //           snackBar("Profile Pic Uploaded Successfully");
+                //         }
+                //       }
+                //     },
+                //     child: Container(
+                //       height: 56,
+                //       width: MediaQuery.of(context).size.width,
+                //       decoration: BoxDecoration(
+                //         color: profilePic == null ? Colors.grey : Colors.green,
+                //         borderRadius: BorderRadius.circular(12),
+                //       ),
+                //       alignment: Alignment.center,
+                //       child: Text("Upload Profile Pic",
+                //         style: GoogleFonts.poppins(
+                //           color: Colors.white,
+                //           fontWeight: FontWeight.w600,
+                //           fontSize: 15,
+                //         ),),
+                //     ),
+                //   ),
+                // ),
+
 
                 load == false ?
                 InkWell(
@@ -382,6 +436,10 @@ class _SignUpState extends State<SignUp> {
                     if(!formKey.currentState!.validate()){
                       return;
                     }
+
+                    // if(profilePic != null && profilePic!.length > 5){
+                    //   return;
+                    // }
 
                     FocusScope.of(context).requestFocus(FocusNode());
 
@@ -396,13 +454,13 @@ class _SignUpState extends State<SignUp> {
 
                       if(user.user!.uid.isNotEmpty){
                         await FirebaseFirestore.instance.collection("users").doc(user.user!.uid).set({
-                          "name": name.text,
+                          "display_name": name.text,
                           "email": email.text,
                           "age": age.toStringAsFixed(0),
                           "date": DateTime.now(),
                           "uid": user.user!.uid,
                         });
-                        navi(name.text);
+                        navi();
                       }
 
                     } on FirebaseAuthException catch (e){
@@ -483,15 +541,16 @@ class _SignUpState extends State<SignUp> {
                               await FirebaseFirestore.instance.collection("users").doc(user.uid).get().then((value) async{
                                 if(!value.exists){
                                   await FirebaseFirestore.instance.collection("users").doc(user.uid).set({
-                                    "name": user.displayName,
+                                    "display_name": user.displayName,
                                     "age": "1",
+                                    "photo_url": user.photoURL,
                                     "email": user.email,
                                     "uid": user.uid,
                                     "date": DateTime.now(),
                                   });
                                 }
                               });
-                              navi(user.displayName);
+                              navi();
                             }
 
                           }catch(e){
