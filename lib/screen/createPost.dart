@@ -348,7 +348,7 @@ class _CreatePostState extends State<CreatePost> {
 
                 ],
               ) : SizedBox(
-                height: MediaQuery.of(context).size.height-100,
+                height: MediaQuery.of(context).size.height-175,
                 width: MediaQuery.of(context).size.width,
                 child: SingleChildScrollView(
                   physics: BouncingScrollPhysics(),

@@ -49,6 +49,7 @@ dependencies:
   share_plus:
   shared_preferences:
   animated_bottom_bar:
+  gallery_saver:
 
 dev_dependencies:
   flutter_test:

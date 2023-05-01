@@ -5,9 +5,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:gallery_saver/gallery_saver.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 
 class ChatScreen extends StatefulWidget {
   final String name;
@@ -51,12 +54,12 @@ class _ChatScreenState extends State<ChatScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         duration: const Duration(milliseconds: 2000),
-        backgroundColor: Colors.white,
+        backgroundColor: Color(0xFFD30026),
         padding: const EdgeInsets.symmetric(horizontal: 25,vertical: 15),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         content: Text(s,
           style: GoogleFonts.poppins(
-              color: Colors.black,
+              color: Colors.white,
               fontSize: 16,
               fontWeight: FontWeight.w600),
         ),
@@ -100,11 +103,6 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  List<String> fileExt = [
-    "jpeg",
-    "png",
-    "jpg",
-  ];
 
   sendImg(String imgPath) async{
 
@@ -316,8 +314,13 @@ class _ChatScreenState extends State<ChatScreen> {
 
           InkWell(
             onLongPress: ()async{
-              await Clipboard.setData(ClipboardData(text: s));
-              snackBar("Text copy successfully");
+              if(img == false){
+                await Clipboard.setData(ClipboardData(text: s));
+                snackBar("Text copy successfully");
+              }else{
+                download("Download Image!", s);
+              }
+              
             },
             child: Container(
               decoration: BoxDecoration(
@@ -461,8 +464,12 @@ class _ChatScreenState extends State<ChatScreen> {
 
           InkWell(
             onLongPress: ()async{
-              await Clipboard.setData(ClipboardData(text: s));
-              snackBar("Text copy successfully");
+              if(img == false){
+                await Clipboard.setData(ClipboardData(text: s));
+                snackBar("Text copy successfully");
+              }else{
+                download("Download Image!", s);
+              }
             },
             child: Container(
               decoration: BoxDecoration(
@@ -546,6 +553,89 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
           );
         });
+  }
+
+  download(String yo,String url) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Center(
+                child: Text(
+                  yo,
+                  style: TextStyle(
+                    color: Colors.black.withOpacity(0.75),
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
+                )),
+            elevation: 5,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            actions: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10.0,vertical: 5),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 20),
+                        child: Text(
+                          "Cancel",
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Color(0xff151515),
+                          ),
+                        ),
+                      ),
+                    ),
+                    MaterialButton(
+                      elevation: 10,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      color: Color(0xFFD30026),
+                      minWidth: MediaQuery.of(context).size.width*0.3,
+                      height: 45,
+                      onPressed: () async{
+                        Future.delayed(Duration(milliseconds: 200),() async{
+                          print(url);
+                          down(url);
+                        });
+                        Navigator.of(context).pop();
+                      },
+                      child: Text(
+                        'Download',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          color: Colors.white,
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ],
+          );
+        });
+  }
+
+  down(String url)async{
+    showLoad();
+    var response = await http.get(Uri.parse(url));
+    final tempDir = await getTemporaryDirectory();
+    File? file = await File('${tempDir.path}/image.png').create(recursive: true);
+    file.writeAsBytesSync(response.bodyBytes);
+    await GallerySaver.saveImage(file.path);
+    Navigator.of(context).pop();
+    snackBar("Image Downloaded");
   }
 
 }
