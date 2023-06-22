@@ -21,6 +21,7 @@ class CreatePost extends StatefulWidget {
 class _CreatePostState extends State<CreatePost> {
   TextEditingController txt = TextEditingController();
   TextEditingController forum = TextEditingController();
+
   final ImagePicker picker = ImagePicker();
 
   String key = "";
