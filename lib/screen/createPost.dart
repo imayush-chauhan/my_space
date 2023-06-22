@@ -23,7 +23,7 @@ class _CreatePostState extends State<CreatePost> {
   TextEditingController forum = TextEditingController();
   final ImagePicker picker = ImagePicker();
 
-  String key = "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";
+  String key = "";
 
   bool ai = false;
   String? aiUrl;
