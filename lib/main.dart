@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:taskapp/screen/landing_page.dart';
 import 'package:taskapp/screen/signIn.dart';
+import 'package:taskapp/test.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,7 +22,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      // home: FriendScreen(),
+      // home: TextFF(),
       home: FirebaseAuth.instance.currentUser != null ?
       const LandingPage() : const SignIn(),
     );

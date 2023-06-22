@@ -23,7 +23,7 @@ class _CreatePostState extends State<CreatePost> {
   TextEditingController forum = TextEditingController();
   final ImagePicker picker = ImagePicker();
 
-  String key = "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";
+  String key = "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";
 
   bool ai = false;
   String? aiUrl;
@@ -151,13 +151,13 @@ class _CreatePostState extends State<CreatePost> {
                       if (txt.text.length > 0) {
                         if(ai == false){
                           if (image == null) {
-                            post("",snap.data!.get("photo_url"),snap.data!.get("display_name"));
+                            post("",da.containsKey("photo_url") ? snap.data!.get("photo_url") : "",snap.data!.get("display_name"));
                           } else {
-                            uploadPostImage(File(image!.path),snap.data!.get("photo_url"),snap.data!.get("display_name"));
+                            uploadPostImage(File(image!.path),da.containsKey("photo_url") ? snap.data!.get("photo_url") : "",snap.data!.get("display_name"));
                           }
                         }else{
                           if(ai == true && aiUrl != null){
-                            _asyncMethod(aiUrl!,snap.data!.get("photo_url"),snap.data!.get("display_name"));
+                            _asyncMethod(aiUrl!,da.containsKey("photo_url") ? snap.data!.get("photo_url") : "",snap.data!.get("display_name"));
                           }else{
                             snackBar("Empty Post");
                           }
@@ -399,7 +399,7 @@ class _CreatePostState extends State<CreatePost> {
                           setState(() {
                             load = true;
                           });
-                          await getTxt(forum.text,snap.data!.get("photo_url"),snap.data!.get("display_name"));
+                          await getTxt(forum.text);
                           setState(() {
                             load = false;
                           });
@@ -521,7 +521,7 @@ class _CreatePostState extends State<CreatePost> {
     );
   }
 
-  getTxt(String text,String photo, String name)async{
+  getTxt(String text)async{
 
     print("in");
 
@@ -547,7 +547,7 @@ class _CreatePostState extends State<CreatePost> {
           txt.text = d["choices"][0]["message"]["content"].toString().trim();
         });
         if(txt.text.length > 0){
-          await getImg(text,photo,name);
+          await getImg(text);
         }else{
           snackBar("something went wrong");
         }
@@ -564,7 +564,7 @@ class _CreatePostState extends State<CreatePost> {
 
   }
 
-  getImg(String txt,String photo, String name)async{
+  getImg(String txt)async{
 
     print("in");
 
@@ -577,9 +577,9 @@ class _CreatePostState extends State<CreatePost> {
         },
 
         body: json.encode({
-          "prompt": txt + " in english",
+          "prompt": txt,
           "n": 1,
-          "size": "1024x1024"
+          "size": "512x512"
         }),);
 
       Map<String,dynamic> d = jsonDecode(res.body);

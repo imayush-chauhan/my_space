@@ -449,8 +449,7 @@ class _SignUpState extends State<SignUp> {
 
                     try{
 
-                      UserCredential user = await FirebaseAuth.instance.
-                      createUserWithEmailAndPassword(email: email.text, password: pass.text);
+                      UserCredential user = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email.text, password: pass.text);
 
                       if(user.user!.uid.isNotEmpty){
                         await FirebaseFirestore.instance.collection("users").doc(user.user!.uid).set({
